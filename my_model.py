@@ -38,7 +38,7 @@ def create_model_1_2(input_shape, n_output):
         Bidirectional(LSTM(128, return_sequences=True)),
         Bidirectional(LSTM(32, return_sequences=False)),
         Dense(n_output, activation="softmax")
-    ], name="book's model")
+    ])
     return model
 
 def create_model_2(input_shape, n_output):
