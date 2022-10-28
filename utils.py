@@ -1,6 +1,8 @@
 import os
 import numpy as np
 import pandas as pd
+from scipy.signal import savgol_filter, medfilt
+from scipy.ndimage import maximum_filter
 
 N_OF_TIMESTEP = 854
 N_OF_FEATURE = 50
@@ -40,6 +42,23 @@ def drop_features(df, features_number_list):
     features_list = [f'{e}{t}' for e in features_number_list for t in ['X', 'Y']]
     result = df.drop(features_list, axis=1)
     return result
+
+def apply_savgol_filter(np_array, window_size=20, polynomial=1):
+    smooth_np_array = savgol_filter(np_array, window_size, polynomial)
+    return smooth_np_array
+
+def apply_median_filter(np_array, window_size=17):
+    smooth_np_array = medfilt(np_array, window_size)
+    return smooth_np_array
+
+def apply_maximum_filter(np_array, window_size=24):
+    smooth_np_array = maximum_filter(np_array, window_size)
+    return smooth_np_array
+
+def apply_is_zero(np_array):
+    is_zero = (np_array==0.0).astype(np.float32)
+    return is_zero
+
 
 if __name__ == '__main__':
     train_df = pd.read_csv(os.path.join('data', 'unionTrain.csv'))
