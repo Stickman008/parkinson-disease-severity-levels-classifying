@@ -43,7 +43,7 @@ def drop_features(df, features_number_list):
     result = df.drop(features_list, axis=1)
     return result
 
-def apply_savgol_filter(np_array, window_size=20, polynomial=1):
+def apply_savgol_filter(np_array, window_size=21, polynomial=1):
     smooth_np_array = savgol_filter(np_array, window_size, polynomial)
     return smooth_np_array
 
@@ -51,12 +51,12 @@ def apply_median_filter(np_array, window_size=17):
     smooth_np_array = medfilt(np_array, window_size)
     return smooth_np_array
 
-def apply_maximum_filter(np_array, window_size=24):
+def apply_maximum_filter(np_array, window_size=25):
     smooth_np_array = maximum_filter(np_array, window_size)
     return smooth_np_array
 
 def apply_is_zero(np_array):
-    is_zero = (np_array==0.0).astype(np.float32)
+    is_zero = (np_array<1).astype(np.float32)
     return is_zero
 
 
