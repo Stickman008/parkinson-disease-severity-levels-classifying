@@ -2,7 +2,7 @@ import os
 
 import tensorflow as tf
 from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Dropout, InputLayer, TimeDistributed, Conv1D, MaxPooling1D, Flatten
+from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Dropout, InputLayer, TimeDistributed, Conv1D, MaxPooling1D, Flatten, BatchNormalization
 from tensorflow.keras.layers import concatenate
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import BinaryCrossentropy, CategoricalCrossentropy
@@ -37,6 +37,17 @@ def create_model_1_2(input_shape, n_output):
         Bidirectional(LSTM(128, return_sequences=True)),
         Bidirectional(LSTM(128, return_sequences=True)),
         Bidirectional(LSTM(32, return_sequences=False)),
+        Dense(n_output, activation="softmax")
+    ])
+    return model
+
+def create_model_1_3(input_shape, n_output):
+    model = Sequential([
+        InputLayer(input_shape),
+        Bidirectional(LSTM(64, return_sequences=True)),
+        BatchNormalization(),
+        Bidirectional(LSTM(16, return_sequences=False)),
+        Dense(25, activation='selu'),
         Dense(n_output, activation="softmax")
     ])
     return model
