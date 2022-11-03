@@ -20,6 +20,17 @@ def create_model_1(input_shape, n_output):
     ])
     return model
 
+def create_model_1_0(input_shape, n_output):
+    model = Sequential([
+        InputLayer(input_shape),
+        LSTM(32, return_sequences=True),
+        LSTM(16, return_sequences=True),
+        LSTM(16, return_sequences=False),
+        Dense(25, activation='selu'),
+        Dense(n_output, activation="softmax")
+    ])
+    return model
+
 def create_model_1_1(input_shape, n_output):
     model = Sequential([
         InputLayer(input_shape),
