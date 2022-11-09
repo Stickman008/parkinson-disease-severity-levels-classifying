@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import scipy
 from scipy.signal import savgol_filter, medfilt
 from scipy.ndimage import maximum_filter
 
@@ -8,12 +9,12 @@ N_OF_TIMESTEP = 854
 N_OF_FEATURE = 50
 
 def mod_X(x_df):
-    MY_COL = [f"{i}{ee}" for i in range(N_OF_FEATURE//2) for ee in ['X', 'Y']]
+    MY_COL = [f'{i}{ee}' for i in range(N_OF_FEATURE//2) for ee in ['X', 'Y']]
     ID_ROW = np.array([i for i in range(len(x_df)) for _ in range(N_OF_TIMESTEP)])
     TIMESTEP =  np.array([j for _ in range(len(x_df)) for j in range(N_OF_TIMESTEP)])
     
     result = x_df.to_numpy()
-    result = result.reshape(-1, 50)
+    result = result.reshape(-1, N_OF_FEATURE)
     result = pd.DataFrame(result, columns=MY_COL)
     result.insert(0, 'id', ID_ROW)
     result.insert(1, 'timestep', TIMESTEP)
@@ -43,28 +44,42 @@ def drop_features(df, features_number_list):
     result = df.drop(features_list, axis=1)
     return result
 
+
+def convert_to_numpy(pd_series):
+    if type(pd_series).__module__ != np.__name__:
+        return pd_series.to_numpy()
+    else:
+        return pd_series.copy()
+
 def apply_savgol_filter(np_array, window_size=21, polynomial=1):
-    smooth_np_array = savgol_filter(np_array, window_size, polynomial)
-    return smooth_np_array
+    preprocessed_array = convert_to_numpy(np_array)
+    preprocessed_array = preprocessed_array
+    preprocessed_array[:] = savgol_filter(preprocessed_array[:], window_size, polynomial)
+    return preprocessed_array.reshape(-1)
 
 def apply_median_filter(np_array, window_size=17):
-    smooth_np_array = medfilt(np_array, window_size)
-    return smooth_np_array
+    preprocessed_array = convert_to_numpy(np_array)
+    preprocessed_array = preprocessed_array.reshape(-1, N_OF_TIMESTEP)
+    preprocessed_array[:] = medfilt(preprocessed_array[:], window_size)
+    return preprocessed_array.reshape(-1)
 
 def apply_maximum_filter(np_array, window_size=25):
-    smooth_np_array = maximum_filter(np_array, window_size)
-    return smooth_np_array
+    preprocessed_array = convert_to_numpy(np_array)
+    preprocessed_array = preprocessed_array.reshape(-1, N_OF_TIMESTEP)
+    preprocessed_array[:] = maximum_filter(preprocessed_array[:], window_size)
+    return preprocessed_array.reshape(-1)
 
 def apply_is_zero(np_array):
-    is_zero = (np_array<1).astype(np.float32)
+    preprocessed_array = convert_to_numpy(np_array)
+    is_zero = (preprocessed_array<1).astype(np.float32)
     return is_zero
 
 
 if __name__ == '__main__':
     train_df = pd.read_csv(os.path.join('data', 'unionTrain.csv'))
     # X_train, y_train = train_df.drop(['Severity', 'sequence_id'], axis=1), train_df['Severity']
-    # modded_X = mod_X(X_train)
-    # print(modded_X)
+    # print(train_df)
     X_train, y_train = mod_df(train_df)
-    print(X_train)
-    print(y_train)
+    print(apply_savgol_filter(X_train['0X']))
+    # print(X_train)
+    # print(y_train)
