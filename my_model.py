@@ -54,9 +54,9 @@ def create_model_1_3(input_shape, n_output):
     model = Sequential([
         InputLayer(input_shape),
         Bidirectional(LSTM(64, return_sequences=True)),
-        BatchNormalization(),
-        Bidirectional(LSTM(16, return_sequences=False)),
+        Bidirectional(LSTM(32, return_sequences=False)),
         Dense(25, activation='selu'),
+        Dropout(0.25),
         Dense(n_output, activation="softmax")
     ])
     return model

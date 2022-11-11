@@ -4,6 +4,7 @@ import pandas as pd
 import scipy
 from scipy.signal import savgol_filter, medfilt
 from scipy.ndimage import maximum_filter
+from matplotlib import pyplot as plt
 
 N_OF_TIMESTEP = 854
 N_OF_FEATURE = 50
@@ -74,6 +75,21 @@ def apply_is_zero(np_array):
     is_zero = (preprocessed_array<1).astype(np.float32)
     return is_zero
 
+def plot_history(history):
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validate'], loc='upper left')
+    plt.show()
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='best')
+    plt.show()
 
 if __name__ == '__main__':
     train_df = pd.read_csv(os.path.join('data', 'unionTrain.csv'))
