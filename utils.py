@@ -1,10 +1,14 @@
 import os
 import numpy as np
 import pandas as pd
-import scipy
+
 from scipy.signal import savgol_filter, medfilt
 from scipy.ndimage import maximum_filter
+
 from matplotlib import pyplot as plt
+import seaborn as sns
+
+from sklearn.metrics import f1_score, accuracy_score, confusion_matrix, classification_report
 
 N_OF_TIMESTEP = 854
 N_OF_FEATURE = 50
@@ -90,6 +94,20 @@ def plot_history(history):
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='best')
     plt.show()
+    
+def evaluate_model(model, X, y, show=False):
+    predict = model.predict(X, batch_size=4)
+    predict = np.argmax(predict, axis=1)+1
+    real = np.argmax(y, axis=1)+1
+    if show:
+        f1_train = f1_score(real, predict)
+        accuracy_train = accuracy_score(real, predict)
+        print(classification_report(real, predict, digits=4))
+        print("---------------------------------------------------------")
+        sns.heatmap(confusion_matrix(real, predict),annot = True,fmt = '2.0f')
+        plt.show()
+    return classification_report(real, predict, digits=4)
+    
 
 if __name__ == '__main__':
     train_df = pd.read_csv(os.path.join('data', 'unionTrain.csv'))
