@@ -61,6 +61,16 @@ def create_model_1_3(input_shape, n_output):
     ])
     return model
 
+def create_model_1_4(input_shape, n_output):
+    model = Sequential([
+        InputLayer(input_shape),
+        Bidirectional(LSTM(128, return_sequences=True)),
+        Bidirectional(LSTM(32, return_sequences=False)),
+        Dense(25, activation='selu'),
+        Dense(n_output, activation="softmax")
+    ])
+    return model
+
 def create_model_2(input_shape, n_output):
     model = Sequential([
         InputLayer(input_shape),
