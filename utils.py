@@ -79,6 +79,34 @@ def apply_is_zero(np_array):
     is_zero = (preprocessed_array<1).astype(np.float32)
     return is_zero
 
+def apply_std(np_array):
+    preprocessed_array = convert_to_numpy(np_array)
+    preprocessed_array = preprocessed_array.reshape(-1, N_OF_TIMESTEP)
+    preprocessed_array = np.std(preprocessed_array[:], axis=1).reshape(-1, 1)
+    preprocessed_array = np.repeat(preprocessed_array, N_OF_TIMESTEP, axis=1)
+    return preprocessed_array.reshape(-1)
+
+def apply_mean(np_array):
+    preprocessed_array = convert_to_numpy(np_array)
+    preprocessed_array = preprocessed_array.reshape(-1, N_OF_TIMESTEP)
+    preprocessed_array = np.mean(preprocessed_array[:], axis=1).reshape(-1, 1)
+    preprocessed_array = np.repeat(preprocessed_array, N_OF_TIMESTEP, axis=1)
+    return preprocessed_array.reshape(-1)
+
+def apply_max_value(np_array):
+    preprocessed_array = convert_to_numpy(np_array)
+    preprocessed_array = preprocessed_array.reshape(-1, N_OF_TIMESTEP)
+    preprocessed_array = np.max(preprocessed_array[:], axis=1).reshape(-1, 1)
+    preprocessed_array = np.repeat(preprocessed_array, N_OF_TIMESTEP, axis=1)
+    return preprocessed_array.reshape(-1)
+
+def apply_min_value(np_array):
+    preprocessed_array = convert_to_numpy(np_array)
+    preprocessed_array = preprocessed_array.reshape(-1, N_OF_TIMESTEP)
+    preprocessed_array = np.min(preprocessed_array[:], axis=1).reshape(-1, 1)
+    preprocessed_array = np.repeat(preprocessed_array, N_OF_TIMESTEP, axis=1)
+    return preprocessed_array.reshape(-1)
+
 def plot_history(history):
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
@@ -114,6 +142,7 @@ if __name__ == '__main__':
     # X_train, y_train = train_df.drop(['Severity', 'sequence_id'], axis=1), train_df['Severity']
     # print(train_df)
     X_train, y_train = mod_df(train_df)
-    print(apply_savgol_filter(X_train['0X']))
+    print(X_train['0X'].shape)
+    print(apply_std(X_train['0X']))
     # print(X_train)
     # print(y_train)
