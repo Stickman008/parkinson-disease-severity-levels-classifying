@@ -107,6 +107,16 @@ def apply_min_value(np_array):
     preprocessed_array = np.repeat(preprocessed_array, N_OF_TIMESTEP, axis=1)
     return preprocessed_array.reshape(-1)
 
+def apply_min_max_scale(np_array):
+    preprocessed_array = convert_to_numpy(np_array)
+    mx = apply_max_value(np_array)
+    mn = apply_min_value(np_array)
+    if mx == 0: 
+        mx = 1
+    preprocessed_array = (preprocessed_array-mn)/(mx-mn)
+    return preprocessed_array
+    
+
 def plot_history(history):
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
@@ -143,6 +153,6 @@ if __name__ == '__main__':
     # print(train_df)
     X_train, y_train = mod_df(train_df)
     print(X_train['0X'].shape)
-    print(apply_std(X_train['0X']))
+    print(apply_min_max_scale(X_train['0X']))
     # print(X_train)
     # print(y_train)
