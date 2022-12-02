@@ -53,7 +53,7 @@ def convert_to_numpy(pd_series):
 
 def apply_savgol_filter(np_array, window_size=21, polynomial=1):
     preprocessed_array = convert_to_numpy(np_array)
-    preprocessed_array = preprocessed_array
+    preprocessed_array = preprocessed_array.reshape(-1, N_OF_TIMESTEP)
     preprocessed_array[:] = savgol_filter(preprocessed_array[:], window_size, polynomial)
     return preprocessed_array.reshape(-1)
 
@@ -117,6 +117,29 @@ def apply_standard_scale(np_array):
     std = apply_std(np_array)
     std[std==0] = 1
     preprocessed_array = (preprocessed_array-mean)/std
+    return preprocessed_array
+
+def fill_with_mean(np_array, ts=0):
+    preprocessed_array = convert_to_numpy(np_array)
+    mean = apply_mean(preprocessed_array)
+    tmp = np.where(preprocessed_array<=ts)
+    preprocessed_array[tmp] = mean[tmp]
+    return preprocessed_array
+    
+def clip_with_each_sample_sd(np_array, sd_mul=2):
+    preprocessed_array = convert_to_numpy(np_array)
+    mean = apply_mean(preprocessed_array)
+    std = apply_std(preprocessed_array)
+    mn_range, mx_range = mean-sd_mul*std, mean+sd_mul*std
+    preprocessed_array = np.clip(preprocessed_array, mn_range, mx_range)
+    return preprocessed_array
+
+def clip_with_all_sample_sd(np_array, sd_mul=2):
+    preprocessed_array = convert_to_numpy(np_array)
+    std = np.std(preprocessed_array)
+    mean = np.mean(preprocessed_array)
+    mn_range, mx_range = mean-sd_mul*std, mean+sd_mul*std
+    preprocessed_array = np.clip(preprocessed_array, mn_range, mx_range)
     return preprocessed_array
 
 
